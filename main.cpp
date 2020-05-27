@@ -13,6 +13,9 @@ using namespace std;
 int readLines(string dataFile);
 int stringToInt(string dataString);
 void lineToArray(vector<int> &vect, string dataString, int length);
+void firstFit(vector<int> &vect,int length);
+void firstFitDecreasing(vector<int> &vect,int length);
+void bestFit(vector<int> &vect,int length);
 
 int main() {
     cout << "----- First-Fit Algorithm -----" << endl;
@@ -53,9 +56,12 @@ int readLines(string dataFile) {
             getline(inputFile, fileLine);
             lineToArray(items, fileLine, numItems);
 
-            for (j = 0; j < numItems; j++) {
-                cout << items[j] << " ";
-            }
+            cout << "Test Case " << (i + 1) << " ";
+
+            firstFit(items, numItems);
+            firstFitDecreasing(items, numItems);
+            bestFit(items, numItems);
+
             cout << endl;
 
             items.clear();
@@ -104,4 +110,16 @@ void lineToArray(vector<int> &vect, string dataString, int length) {
 
         dataItr++;
     }
+}
+
+void firstFit(vector<int> &vect,int length) {
+    cout << "First Fit: ";
+}
+
+void firstFitDecreasing(vector<int> &vect,int length) {
+    cout << "First Fit Decreasing: ";
+}
+
+void bestFit(vector<int> &vect,int length) {
+    cout << "Best Fit: ";
 }
