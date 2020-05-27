@@ -1,2 +1,2 @@
 #!/bin/bash
-g++ -o Bin main.cpp
+g++ -o Bin first-fit.cpp
