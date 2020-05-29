@@ -13,9 +13,11 @@ using namespace std;
 int readLines(string dataFile);
 int stringToInt(string dataString);
 void lineToArray(vector<int> &vect, string dataString, int length);
-void firstFit(vector<int> vect,int length, int binSize);
-void firstFitDecreasing(vector<int> &vect,int length, int binSize);
-void bestFit(vector<int> &vect,int length, int binSize);
+void firstFit(vector<int> vect, int length, int binSize);
+void firstFitDecreasing(vector<int> &vect, int length, int binSize);
+void bestFit(vector<int> &vect, int length, int binSize);
+void mergeSort(vector<int> &vect, int left, int right);
+void merge(vector<int> &vect, int left, int right, int middle);
 
 int main() {
     cout << "----- First-Fit Algorithm -----" << endl;
@@ -35,6 +37,7 @@ int main() {
 int readLines(string dataFile) {
     string fileLine;
     vector<int> items;
+    vector<int> itemsSorted;
     int numTestCases, binCapacity, numItems, itemWeight, i, j;
 
     ifstream inputFile(dataFile.c_str()); // Open passed file
@@ -56,16 +59,18 @@ int readLines(string dataFile) {
             getline(inputFile, fileLine);
             lineToArray(items, fileLine, numItems);
 
-            for (int j = 0; j < numItems; j++) {
-                cout << items[j] << " ";
-            }
-            cout << endl;
+            // for (int j = 0; j < numItems; j++) {
+            //     cout << items[j] << " ";
+            // }
+            // cout << endl;
 
             cout << "Test Case " << (i + 1) << " ";
 
             firstFit(items, numItems, binCapacity);
-            // firstFitDecreasing(items, numItems, binCapacity);
-            // bestFit(items, numItems, binCapacity);
+            itemsSorted = items;
+            firstFitDecreasing(itemsSorted, numItems, binCapacity);
+            bestFit(items, numItems, binCapacity);
+
             cout << endl;
 
             items.clear();
@@ -102,9 +107,7 @@ void lineToArray(vector<int> &vect, string dataString, int length) {
             dataValue = atoi(dataItem.c_str()); // Convert value to integer
 
             // Add value to data array and increment vector iterator
-            // vect.at(vectorItr) = dataValue;
             vect[vectorItr] = dataValue;
-            // vect.push_back(dataValue);
             vectorItr++;
             
             dataValue = 0;
@@ -144,12 +147,90 @@ void firstFit(vector<int> vect,int length, int binSize) {
     cout << "First Fit: " << numBins << " ";
 }
 
-void firstFitDecreasing(vector<int> &vect,int length, int binSize) {
+void firstFitDecreasing(vector<int> &vect, int length, int binSize) {
+    int i, j, doesFit;
+    vector<int> binVect;
     int numBins = 1;
+    binVect.push_back(binSize);
+
+    mergeSort(vect, 0, (length - 1));
+
+    for (i = 0; i < vect.size(); i++) {
+        doesFit = 0;
+        for (j = 0; j < binVect.size(); j++) {
+            if (vect[i] <= binVect[j]) {
+                binVect[j] -= vect[i];
+                doesFit = 1;
+                break;
+            }
+        }
+
+        if (doesFit == 0) {
+            binVect.push_back(binSize);
+            binVect[binVect.size() - 1] -= vect[i];
+            numBins++;
+        }
+    }
     cout << "First Fit Decreasing: " << numBins << " ";
 }
 
 void bestFit(vector<int> &vect,int length, int binSize) {
     int numBins = 1;
     cout << "Best Fit: " << numBins << " ";
+}
+
+void mergeSort(vector<int> &vect, int left, int right) {
+    if (left < right) {
+        int middle = (left + right)/2;
+
+        mergeSort(vect, left, middle);
+        mergeSort(vect, (middle + 1), right);
+
+        merge(vect, left, right, middle);
+    }
+}
+
+void merge(vector<int> &vect, int left, int right, int middle) {
+    vector<int> vectorLeft;
+    vector<int> vectorRight;
+    int vectorLeftSize = middle - left + 1;
+    int vectorRightSize = right - middle;
+    int i;
+    int j = 0;
+    int k = left;
+
+    vectorLeft.resize(vectorLeftSize);
+    vectorRight.resize(vectorRightSize);
+
+    for (i = 0; i < vectorLeftSize; i++) {
+        vectorLeft[i] = vect[left + i];
+    }
+    for (i = 0; i < vectorRightSize; i++) {
+        vectorRight[i] = vect[middle + i + 1];
+    }
+
+    i = 0;
+    while ((i < vectorLeftSize) && (j < vectorRightSize)) {
+        if (vectorLeft[i] <= vectorRight[j]) {
+            vect[k] = vectorLeft[i];
+            i++;
+        }
+        else {
+            vect[k] = vectorRight[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < vectorLeftSize) {
+        vect[k] = vectorLeft[i];
+        i++;
+        k++;
+    }
+
+    while (j < vectorRightSize) {
+        vect[k] = vectorRight[j];
+        j++;
+        k++;
+    }
 }
