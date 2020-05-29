@@ -47,7 +47,7 @@ int readLines(string dataFile) {
         getline(inputFile, fileLine);
         numTestCases = stringToInt(fileLine);
 
-        // Iterate through each wrestler and initialize instance
+        // Iterate through each test case to find bin capacity, number of items and item weights
         for (i = 0; i < numTestCases; i++) {
             getline(inputFile, fileLine);
             binCapacity = stringToInt(fileLine);
@@ -58,11 +58,6 @@ int readLines(string dataFile) {
 
             getline(inputFile, fileLine);
             lineToArray(items, fileLine, numItems);
-
-            // for (int j = 0; j < numItems; j++) {
-            //     cout << items[j] << " ";
-            // }
-            // cout << endl;
 
             cout << "Test Case " << (i + 1) << " ";
 
@@ -154,6 +149,8 @@ void firstFitDecreasing(vector<int> &vect, int length, int binSize) {
     binVect.push_back(binSize);
 
     mergeSort(vect, 0, (length - 1));
+    vector<int> reverse(vect.rbegin(),vect.rend());
+    vect.swap(reverse);
 
     for (i = 0; i < vect.size(); i++) {
         doesFit = 0;
@@ -175,7 +172,33 @@ void firstFitDecreasing(vector<int> &vect, int length, int binSize) {
 }
 
 void bestFit(vector<int> &vect,int length, int binSize) {
+    int i, j, doesFit, leastRoomVal, leastRoomIdx;
+    vector<int> binVect;
     int numBins = 1;
+    binVect.push_back(binSize);
+
+    for (i = 0; i < vect.size(); i++) {
+        doesFit = 0;
+        leastRoomVal = 10000;
+        leastRoomIdx = 0;
+        for (j = 0; j < binVect.size(); j++) {
+            if ((leastRoomVal > (binVect[j] - vect[i])) && ((binVect[j] - vect[i]) >= 0)) {
+                leastRoomVal = binVect[j] - vect[i];
+                leastRoomIdx = j;
+                doesFit = 1;
+            }
+        }
+
+        if (doesFit == 0) {
+            binVect.push_back(binSize);
+            binVect[binVect.size() - 1] -= vect[i];
+            numBins++;
+        }
+        else {
+            binVect[leastRoomIdx] -= vect[i];
+        }
+    }
+
     cout << "Best Fit: " << numBins << " ";
 }
 

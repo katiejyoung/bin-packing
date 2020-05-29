@@ -23,8 +23,8 @@ The first line is the number of test cases, followed by the capacity of bins for
 
 ## Sample output:
 Test Case 1 First Fit: 2, First Fit Decreasing: 2, Best Fit: 2  
-Test Case 2 First Fit: 12, First Fit Decreasing: 12, Best Fit: 12  
-Test Case 3 First Fit: 3, First Fit Decreasing: 3, Best Fit: 2  
+Test Case 2 First Fit: 12, First Fit Decreasing: 10, Best Fit: 12  
+Test Case 3 First Fit: 3, First Fit Decreasing: 2, Best Fit: 2  
 
 
 ## To Run the Program:
