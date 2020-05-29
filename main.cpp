@@ -20,7 +20,7 @@ void mergeSort(vector<int> &vect, int left, int right);
 void merge(vector<int> &vect, int left, int right, int middle);
 
 int main() {
-    cout << "----- First-Fit Algorithm -----" << endl;
+    cout << "----- Bin Packing Algorithms -----" << endl;
     int success = readLines("bin.txt"); // Initiate program
 
     // Output message according to program success
@@ -59,16 +59,18 @@ int readLines(string dataFile) {
             getline(inputFile, fileLine);
             lineToArray(items, fileLine, numItems);
 
+            // Output test case index
             cout << "Test Case " << (i + 1) << " ";
 
+            // Call appropriate functions for bin placement
             firstFit(items, numItems, binCapacity);
-            itemsSorted = items;
+            itemsSorted = items; // Save items vector values to itemsSorted for sorting
             firstFitDecreasing(itemsSorted, numItems, binCapacity);
             bestFit(items, numItems, binCapacity);
 
             cout << endl;
 
-            items.clear();
+            items.clear(); // Clear vector
         }
 
         inputFile.close(); // Close ifstream
@@ -116,103 +118,131 @@ void lineToArray(vector<int> &vect, string dataString, int length) {
     }
 }
 
+// Places items in bins using first-fit principle
 void firstFit(vector<int> vect,int length, int binSize) {
     int i, j, doesFit;
     vector<int> binVect;
     int numBins = 1;
-    binVect.push_back(binSize);
+    binVect.push_back(binSize); // Apply bin capacity amount to first bin
 
+    // Iterate through items vector
     for (i = 0; i < vect.size(); i++) {
-        doesFit = 0;
+        doesFit = 0; // Reset boolean variable
+
+        // Iterate through bins vector
         for (j = 0; j < binVect.size(); j++) {
-            if (vect[i] <= binVect[j]) {
+            // Add to bin if item weight is smaller than remaining capacity
+            if (vect[i] <= binVect[j]) { 
                 binVect[j] -= vect[i];
-                doesFit = 1;
+                doesFit = 1; // Update boolean variable
                 break;
             }
         }
 
+        // If item did not fit in existing bin, create a new one
         if (doesFit == 0) {
             binVect.push_back(binSize);
-            binVect[binVect.size() - 1] -= vect[i];
-            numBins++;
+            binVect[binVect.size() - 1] -= vect[i]; // Decrease current item from bin capacity
+            numBins++; // Increment bin counter
         }
     }
 
+    // Output results
     cout << "First Fit: " << numBins << " ";
 }
 
+// Sorts items using merge-sort, then places them in bins using first-fit principle
 void firstFitDecreasing(vector<int> &vect, int length, int binSize) {
     int i, j, doesFit;
     vector<int> binVect;
     int numBins = 1;
-    binVect.push_back(binSize);
+    binVect.push_back(binSize); // Apply bin capacity amount to first bin
 
+    // Sort items into increasing order
     mergeSort(vect, 0, (length - 1));
+
+    // Create temporary vector to reverse vect into decreasing order
     vector<int> reverse(vect.rbegin(),vect.rend());
     vect.swap(reverse);
 
+    // Iterate through items vector
     for (i = 0; i < vect.size(); i++) {
-        doesFit = 0;
+        doesFit = 0; // Reset boolean variable
+
+        // Iterate through bins vector
         for (j = 0; j < binVect.size(); j++) {
+            // Add to bin if item weight is smaller than remaining capacity
             if (vect[i] <= binVect[j]) {
                 binVect[j] -= vect[i];
-                doesFit = 1;
+                doesFit = 1; // Update boolean variable
                 break;
             }
         }
 
+        // If item did not fit in existing bin, create a new one
         if (doesFit == 0) {
             binVect.push_back(binSize);
-            binVect[binVect.size() - 1] -= vect[i];
-            numBins++;
+            binVect[binVect.size() - 1] -= vect[i]; // Decrease current item from bin capacity
+            numBins++; // Increment bin counter
         }
     }
+
+    // Output results
     cout << "First Fit Decreasing: " << numBins << " ";
 }
 
+// Places items in bins using best-fit logic
 void bestFit(vector<int> &vect,int length, int binSize) {
     int i, j, doesFit, leastRoomVal, leastRoomIdx;
     vector<int> binVect;
     int numBins = 1;
-    binVect.push_back(binSize);
+    binVect.push_back(binSize); // Apply bin capacity amount to first bin
 
+    // Iterate through items vector
     for (i = 0; i < vect.size(); i++) {
-        doesFit = 0;
-        leastRoomVal = 10000;
-        leastRoomIdx = 0;
+        doesFit = 0; // Reset boolean variable
+        leastRoomVal = 10000; // Reset least-remaining-capacity tracker
+        leastRoomIdx = 0; // Reset tracker for least-remaining-capacity index
+
+        // Iterate through bins vector
         for (j = 0; j < binVect.size(); j++) {
+            // Compare leastRoomVal to difference between item and current bin capacity
+            // If leastRoomVal is larger, update variables
             if ((leastRoomVal > (binVect[j] - vect[i])) && ((binVect[j] - vect[i]) >= 0)) {
                 leastRoomVal = binVect[j] - vect[i];
                 leastRoomIdx = j;
-                doesFit = 1;
+                doesFit = 1; // Update boolean variable
             }
         }
 
+        // If item did not fit in existing bin, create a new one
         if (doesFit == 0) {
             binVect.push_back(binSize);
-            binVect[binVect.size() - 1] -= vect[i];
-            numBins++;
+            binVect[binVect.size() - 1] -= vect[i]; // Decrease current item from bin capacity
+            numBins++; // Increment bin counter
         }
-        else {
+        else { // If item did fit in existing bin, decrease item weight from bin at saved index
             binVect[leastRoomIdx] -= vect[i];
         }
     }
 
+    // Output results
     cout << "Best Fit: " << numBins << " ";
 }
 
+// Sorting function that calls itself recursively before merging the left/right sides of array
 void mergeSort(vector<int> &vect, int left, int right) {
     if (left < right) {
         int middle = (left + right)/2;
 
-        mergeSort(vect, left, middle);
-        mergeSort(vect, (middle + 1), right);
+        mergeSort(vect, left, middle); // Sort left-side array
+        mergeSort(vect, (middle + 1), right); // Sort right-side array
 
-        merge(vect, left, right, middle);
+        merge(vect, left, right, middle); // Merge two sides
     }
 }
 
+// Sorting function that merges two array sides
 void merge(vector<int> &vect, int left, int right, int middle) {
     vector<int> vectorLeft;
     vector<int> vectorRight;
@@ -225,6 +255,7 @@ void merge(vector<int> &vect, int left, int right, int middle) {
     vectorLeft.resize(vectorLeftSize);
     vectorRight.resize(vectorRightSize);
 
+    // Save appropriate values to vectorLeft and Vector right for sorting
     for (i = 0; i < vectorLeftSize; i++) {
         vectorLeft[i] = vect[left + i];
     }
@@ -232,6 +263,7 @@ void merge(vector<int> &vect, int left, int right, int middle) {
         vectorRight[i] = vect[middle + i + 1];
     }
 
+    // Sort L/R vectors
     i = 0;
     while ((i < vectorLeftSize) && (j < vectorRightSize)) {
         if (vectorLeft[i] <= vectorRight[j]) {
@@ -245,12 +277,12 @@ void merge(vector<int> &vect, int left, int right, int middle) {
         k++;
     }
 
+    // If one end case (above) reached before the other, sort remaining values
     while (i < vectorLeftSize) {
         vect[k] = vectorLeft[i];
         i++;
         k++;
     }
-
     while (j < vectorRightSize) {
         vect[k] = vectorRight[j];
         j++;
