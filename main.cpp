@@ -13,9 +13,9 @@ using namespace std;
 int readLines(string dataFile);
 int stringToInt(string dataString);
 void lineToArray(vector<int> &vect, string dataString, int length);
-void firstFit(vector<int> &vect,int length);
-void firstFitDecreasing(vector<int> &vect,int length);
-void bestFit(vector<int> &vect,int length);
+void firstFit(vector<int> vect,int length, int binSize);
+void firstFitDecreasing(vector<int> &vect,int length, int binSize);
+void bestFit(vector<int> &vect,int length, int binSize);
 
 int main() {
     cout << "----- First-Fit Algorithm -----" << endl;
@@ -56,12 +56,16 @@ int readLines(string dataFile) {
             getline(inputFile, fileLine);
             lineToArray(items, fileLine, numItems);
 
+            for (int j = 0; j < numItems; j++) {
+                cout << items[j] << " ";
+            }
+            cout << endl;
+
             cout << "Test Case " << (i + 1) << " ";
 
-            firstFit(items, numItems);
-            firstFitDecreasing(items, numItems);
-            bestFit(items, numItems);
-
+            firstFit(items, numItems, binCapacity);
+            // firstFitDecreasing(items, numItems, binCapacity);
+            // bestFit(items, numItems, binCapacity);
             cout << endl;
 
             items.clear();
@@ -98,7 +102,9 @@ void lineToArray(vector<int> &vect, string dataString, int length) {
             dataValue = atoi(dataItem.c_str()); // Convert value to integer
 
             // Add value to data array and increment vector iterator
-            vect[vectorItr] = dataValue; 
+            // vect.at(vectorItr) = dataValue;
+            vect[vectorItr] = dataValue;
+            // vect.push_back(dataValue);
             vectorItr++;
             
             dataValue = 0;
@@ -112,14 +118,38 @@ void lineToArray(vector<int> &vect, string dataString, int length) {
     }
 }
 
-void firstFit(vector<int> &vect,int length) {
-    cout << "First Fit: ";
+void firstFit(vector<int> vect,int length, int binSize) {
+    int i, j, doesFit;
+    vector<int> binVect;
+    int numBins = 1;
+    binVect.push_back(binSize);
+
+    for (i = 0; i < vect.size(); i++) {
+        doesFit = 0;
+        for (j = 0; j < binVect.size(); j++) {
+            if (vect[i] <= binVect[j]) {
+                binVect[j] -= vect[i];
+                doesFit = 1;
+                break;
+            }
+        }
+
+        if (doesFit == 0) {
+            binVect.push_back(binSize);
+            binVect[binVect.size() - 1] -= vect[i];
+            numBins++;
+        }
+    }
+
+    cout << "First Fit: " << numBins << " ";
 }
 
-void firstFitDecreasing(vector<int> &vect,int length) {
-    cout << "First Fit Decreasing: ";
+void firstFitDecreasing(vector<int> &vect,int length, int binSize) {
+    int numBins = 1;
+    cout << "First Fit Decreasing: " << numBins << " ";
 }
 
-void bestFit(vector<int> &vect,int length) {
-    cout << "Best Fit: ";
+void bestFit(vector<int> &vect,int length, int binSize) {
+    int numBins = 1;
+    cout << "Best Fit: " << numBins << " ";
 }
