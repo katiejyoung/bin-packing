@@ -30,4 +30,4 @@ Test Case 3 First Fit: 3, First Fit Decreasing: 2, Best Fit: 2
 ## To Run the Program:
 1. Give yourself permission to the compiler using: "chmod 777 compileall".
 2. Run "compileall" to compile the code.
-3. To run the program, type "Bin".
+3. To run the program, type "binpack".
